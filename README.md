@@ -1,2 +1,2 @@
 # SearchEngine
- 
+Due to space and runtime constraints, the pool of searchable links was capped and the starting urls for our spider were limited to news websites. Python, Scrapy, and Pandas were used to create a myspider.py that constructed data.csv, a dataset containing 2,000,000 links and information about them. Python, Scrapy, and Pandas was then used to create a frequency table for each link and an inverted frequency table containing every word used. React, Node.js, and Express were then used to create a UI for this Search Engine and source data from the inverted frequency table upon search.
