@@ -10,7 +10,7 @@ To Do:
 4. Is it faster to make a list of tuples and map these tuples to a dictionary afterwards?
 '''
 
-data = pd.read_csv("new_data.csv", delimiter="~")
+data = pd.read_csv("new_data.csv", delimiter="~", error_bad_lines=False)
 data.columns = ['title', 'links', 'dict']
 data = data.dropna()
 
@@ -34,6 +34,8 @@ for x in range(0, len(unique_words)):
     for y in range(0, len(data)):
         if unique_words[x] in data.dict.iloc[y]:
             hol_dict.update({data.links.iloc[y]: data.dict.iloc[y][unique_words[x]]})
+    hol_dict = sorted(hol_dict.items(), key=lambda j: j[1], reverse=True)
+    hol_dict = {k: v for k, v in hol_dict}
     output.loc[len(output)] = [unique_words[x], hol_dict]
 
 output.to_csv("output.csv")
