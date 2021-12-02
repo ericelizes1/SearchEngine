@@ -17,25 +17,22 @@ data = data.dropna()
 # Make column a dictionary again (pandas does not recognize dictionaries as a type when reading)
 data.dict = data.dict.apply(literal_eval)
 
-unique_words = []
+unique_words = {}
 
-# Add all unique words to an array to be used as a column for the output dataset.
+# Create a nested dictionary within unique_word with the key being a word and the value being
+# a dictionary of key-value pairs of url-frequency.
 for x in range(0, len(data)):
     for y in range(0, len(data['dict'].iloc[x])):
-        if list(data['dict'].iloc[x].keys())[y] not in unique_words:
-            unique_words.append(list(data['dict'].iloc[x].keys())[y])
+        if list(data['dict'].iloc[x].keys())[y] not in unique_words.keys():
+            unique_words.update({list(data['dict'].iloc[x].keys())[y]:
+                                     {data['links'].iloc[y]: list(data['dict'].iloc[x].values())[y]}})
+        else:
+            unique_words[list(data['dict'].iloc[x].keys())[y]].update({data['links'].iloc[y]:
+                                                                 list(data['dict'].iloc[x].values())[y]})
 
-output = pd.DataFrame(columns=['word', 'count'])
+for key, value in unique_words.items():
+    unique_words.update({key: sorted(value.items(), key=lambda j: j[1], reverse=True)})
 
-# For each unique word, search for it in the dictionary of words for each website, and create a dictionary of websites and
-# the frequency with which the word appears in each one, if at all.
-for x in range(0, len(unique_words)):
-    hol_dict = {}
-    for y in range(0, len(data)):
-        if unique_words[x] in data.dict.iloc[y]:
-            hol_dict.update({data.links.iloc[y]: data.dict.iloc[y][unique_words[x]]})
-    hol_dict = sorted(hol_dict.items(), key=lambda j: j[1], reverse=True)
-    hol_dict = {k: v for k, v in hol_dict}
-    output.loc[len(output)] = [unique_words[x], hol_dict]
-
-output.to_csv("output.csv")
+ifreq = pd.DataFrame(list(unique_words.items()))
+ifreq.columns = ['word', 'dict']
+np.savetxt("inv_freq.csv", ifreq, delimiter="~", fmt="%s", encoding="utf-8")
