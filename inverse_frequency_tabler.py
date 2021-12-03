@@ -2,6 +2,7 @@ import pandas as pd
 from ast import literal_eval
 import numpy as np
 
+# Read the data file produced by frequency_tabler.py
 data = pd.read_csv("new_data.csv", delimiter="~", error_bad_lines=False)
 data.columns = ['title', 'links', 'dict']
 
