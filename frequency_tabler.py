@@ -3,7 +3,7 @@ from collections import Counter
 import re
 import numpy as np
 
-# Read the data file produced by spider.py
+# Read the data file produced by myspider.py
 data = pd.read_csv("data.csv", delimiter="~")
 
 new_data = pd.DataFrame(columns=['Title', 'Link', 'Dict'])
