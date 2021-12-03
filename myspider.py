@@ -6,6 +6,8 @@ from scrapy.exceptions import CloseSpider
 
 class SearchSpider(scrapy.Spider):
     name = 'yinghui'
+    # Start the spider with news website urls to assure a large
+    # breadth of links will be obtained.
     start_urls = ['https://www.cnn.com',
                   'https://www.foxnews.com/',
                   'https://www.msnbc.com/',
@@ -17,10 +19,12 @@ class SearchSpider(scrapy.Spider):
                   'https://www.huffpost.com/',
                   'https://news.google.com/topstories?hl=en-US&gl=US&ceid=US:en']
     count = 0
+    
+    # If a page has more than 100 links, stop at 100.
     max_links = 100
     df = pd.DataFrame(columns=['Title', 'Link'])
-    start = datetime.now()
 
+    
     def parse(self, response):
         if self.count >= self.max_links:
             raise CloseSpider('Max Links Exceeded')
@@ -37,8 +41,10 @@ class SearchSpider(scrapy.Spider):
                         break
                     if page.css('a::attr(href)').get()[:8] == 'https://':
                         temp += 1
+                        # Recur on each link as long as it does not exceed the maximum links number.
                         yield response.follow(page, self.parse)
 
+                        
     def close(self, reason):
         self.df.to_csv('data.csv', sep='~', index=False)
-        print(datetime.now() - self.start)
+        
