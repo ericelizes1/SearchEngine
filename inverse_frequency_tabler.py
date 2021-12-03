@@ -2,16 +2,10 @@ import pandas as pd
 from ast import literal_eval
 import numpy as np
 
-'''
-To Do:
-1. Use boolean array to apply operation once instead of for loop?
-2. Instead of above, use np.vectorize to remove loops? (Hard to do with nested loops)
-3. Use map() instead?
-4. Is it faster to make a list of tuples and map these tuples to a dictionary afterwards?
-'''
-
 data = pd.read_csv("new_data.csv", delimiter="~", error_bad_lines=False)
 data.columns = ['title', 'links', 'dict']
+
+# If a website has no description, remove it, as this is incompatible with our search engine.
 data = data.dropna()
 
 # Make column a dictionary again (pandas does not recognize dictionaries as a type when reading)
@@ -19,7 +13,7 @@ data.dict = data.dict.apply(literal_eval)
 
 unique_words = {}
 
-# Create a nested dictionary within unique_word with the key being a word and the value being
+# Create a nested dictionary within unique_words with the key being a word and the value being
 # a dictionary of key-value pairs of url-frequency.
 for x in range(0, len(data)):
     for y in range(0, len(data['dict'].iloc[x])):
@@ -30,9 +24,12 @@ for x in range(0, len(data)):
             unique_words[list(data['dict'].iloc[x].keys())[y]].update({data['links'].iloc[y]:
                                                                  list(data['dict'].iloc[x].values())[y]})
 
+# Sort the nested dictionaries wihtin unique_words in descending order by count
 for key, value in unique_words.items():
     unique_words.update({key: sorted(value.items(), key=lambda j: j[1], reverse=True)})
 
+# Write the dictionary to csv, with the keys all mapping to a column consisting
+# of unique words, and the values mapping to another column.
 ifreq = pd.DataFrame(list(unique_words.items()))
 ifreq.columns = ['word', 'dict']
 np.savetxt("inv_freq.csv", ifreq, delimiter="~", fmt="%s", encoding="utf-8")
