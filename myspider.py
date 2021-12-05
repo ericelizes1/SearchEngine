@@ -22,7 +22,7 @@ class SearchSpider(scrapy.Spider):
     
     # If a page has more than 100 links, stop at 100.
     max_links = 100
-    df = pd.DataFrame(columns=['Title', 'Link'])
+    df = pd.DataFrame(columns=['Title', 'Link', 'Desc'])
 
     
     def parse(self, response):
