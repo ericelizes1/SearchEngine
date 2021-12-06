@@ -20,9 +20,9 @@ for x in range(0, len(data)):
     for y in range(0, len(data['dict'].iloc[x])):
         if list(data['dict'].iloc[x].keys())[y] not in unique_words.keys():
             unique_words.update({list(data['dict'].iloc[x].keys())[y]:
-                                     {data['links'].iloc[y]: list(data['dict'].iloc[x].values())[y]}})
+                                     {data['links'].iloc[x]: list(data['dict'].iloc[x].values())[y]}})
         else:
-            unique_words[list(data['dict'].iloc[x].keys())[y]].update({data['links'].iloc[y]:
+            unique_words[list(data['dict'].iloc[x].keys())[y]].update({data['links'].iloc[x]:
                                                                  list(data['dict'].iloc[x].values())[y]})
 
 # Sort the nested dictionaries wihtin unique_words in descending order by count
