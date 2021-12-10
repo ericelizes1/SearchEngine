@@ -2,6 +2,12 @@ import pandas as pd
 from ast import literal_eval
 import numpy as np
 
+'''
+File to create an inverse frequency data structure from the frequency table dataframe
+output from frequency_tabler.py. The dataframe that is eventually created and output 
+from this file is what will actually be queried when the user searches for a term.
+'''
+
 # Read the data file produced by frequency_tabler.py
 data = pd.read_csv("new_data.csv", delimiter="~", error_bad_lines=False)
 data.columns = ['title', 'links', 'dict']
