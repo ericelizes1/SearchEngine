@@ -1,5 +1,9 @@
 import pandas as pd
 
+'''
+File to create a search engine entirely using the Python command line.
+'''
+
 # Read in the inverse frequency table -- this will be queried when
 # the user searches for a word.
 data = pd.read_csv("inv_freq2.csv", delimiter="~")
