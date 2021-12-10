@@ -3,6 +3,11 @@ from collections import Counter
 import re
 import numpy as np
 
+'''
+File to create a frequency table data structure from the resultant
+dataframe from myspider.py.
+'''
+
 # Read the data file produced by myspider.py
 data = pd.read_csv("data.csv", delimiter="~")
 
