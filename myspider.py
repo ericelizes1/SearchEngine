@@ -2,6 +2,10 @@ import pandas as pd
 import scrapy
 from scrapy.exceptions import CloseSpider
 
+'''
+File to create a web crawling spider, creating the database of links
+that our entire search engine will be built upon.
+'''
 
 class SearchSpider(scrapy.Spider):
     name = 'yinghui'
