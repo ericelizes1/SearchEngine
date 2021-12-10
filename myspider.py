@@ -1,4 +1,3 @@
-from datetime import datetime
 import pandas as pd
 import scrapy
 from scrapy.exceptions import CloseSpider
@@ -25,15 +24,20 @@ class SearchSpider(scrapy.Spider):
     df = pd.DataFrame(columns=['Title', 'Link', 'Desc'])
 
     
+    # Function to scrape all links.
     def parse(self, response):
+        # If the breadth limit for a webpage has been linked, stop traveling down that path.
         if self.count >= self.max_links:
             raise CloseSpider('Max Links Exceeded')
         else:
+            # Get the title, URL, and description from the website and append it to the dataframe.
             self.df.loc[len(self.df)] = [response.css("title::text").get().strip(),
                                          response.css("meta[property='og:url']::attr(content)").get().strip(),
                                          response.css("meta[property='og:description']::attr(content)").get().strip()]
             self.count += 1
             print(self.count)
+            
+            # If the breadth limit still has not been reached, recur on each link found in the website.
             if self.count < self.max_links:
                 temp = self.count
                 for page in response.css('a'):
