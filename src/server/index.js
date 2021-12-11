@@ -1,8 +1,11 @@
 const express = require('express')
 const app = express()
 const port = 3002
-const fs = require('fs')
+var fs = require('fs')
 var cors = require('cors')
+const eol = require('eol')
+
+var os = require('os')
 
 app.use(cors()) 
 
@@ -14,11 +17,36 @@ kw = req.query.keyword
 
 // read files
 
-data = fs.readFileSync("spiderdata.csv",{encoding:'utf8', flag:'r'})
-inv = fs.readFileSync("shortened.csv",{encoding:'utf8', flag:'r'})
+data = fs.readFileSync("data.csv",{encoding:'utf8', flag:'r'})
+inv = fs.readFileSync("inv_freq.csv",{encoding:'utf8', flag:'r'})
 
-console.log('1')
-// clean data.csv
+/*
+let data = '';
+
+const readStreamD = fs.createReadStream('spiderdata.csv');
+
+readStreamD.on('data', function(chunk) {
+  data += eol.auto(chunk.toString('utf8'));
+});
+
+readStreamD.on('end', function() {
+  console.log('finished reading');
+});
+
+let inv = '';
+
+const readStreamI = fs.createReadStream('inv_freq2.csv');
+
+readStreamI.on('ift', function(chunk) {
+  inv += eol.auto(chunk.toString('utf8'));
+});
+
+readStreamI.on('end', function() {
+  console.log('finished reading');
+});
+*/
+
+// clean spider data
 
 data = data.split('\r\n')
 newdata = []
@@ -34,8 +62,7 @@ for(i = 0; i < newdata.length; i++){
 
 data = newdata
 
-console.log('2')
-// clean shortened.csv
+// clean invserse freq data
 
 inv = inv.split('\r\n')
 newinv = []
@@ -54,7 +81,7 @@ newinv.push(line)
 inv = newinv
  
 // build result data structure
-console.log('3')
+debugger;
 // lowercase the input keyword
 
 kw = kw.trim()
@@ -76,7 +103,7 @@ if (msg == "Oh no! We can't find that word!"){
     res.send(msg)
     return
 }
-debug('4')
+
 // finds the links and their associated titles and descriptions
 // stores them to be outputted
 output = []
@@ -90,9 +117,8 @@ for(i = 0; i < msg.length; i++)
     console.log(output)
 
     res.send(JSON.stringify(output))
-    //res.send(output)
 })
-console.log('5')
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
