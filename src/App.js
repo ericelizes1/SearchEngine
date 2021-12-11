@@ -11,53 +11,40 @@ function App() {
     document.title = "Goggle"
   }, []);
 
-  const[result, setResult] = useState([]);
-
+  // var result = []
+  const [result, setResult] = useState([]);
   return (
     <div className="App">
       <header className="App-header">
         <div className="NameContainer">
         </div>
-        <div className="SearchContainer">
+        <div style={{paddingLeft: '20%', paddingRight: '20%'}}className="SearchContainer">
           <img src={logo} className="App-logo" alt="logo" />
           <input className="SearchBar" id="searchBar" placeholder="Search word here"/>
-          <button onClick={() => setResult(Query())}>Search</button>
+          <button onClick={() => {
+            const input = document.getElementById("searchBar").value;     //query input
+            console.log(input);
+
+            // sends input keyword to index.js to present to server; then logs output (in form of array)
+            fetch("http://localhost:3002?keyword=" + input)
+              .then(res => res.json())
+              .then((out) => {
+                //console.log('OUT BELOW')
+                //console.log(out)
+                setResult(out)
+                console.log(result);
+              })
+              .catch(err => {
+                throw err
+              })
+          }}>Search</button>
         </div>
       </header>
-      <GenerateOutput arr={result}/>
+      <div>
+        <GenerateOutput arr={result}/>
+      </div>
     </div>
   );
-}
-
-// queries the inverse frequency table and data of links from spider output to return relevant results
-function Query() {
-  const input = document.getElementById("searchBar").value;     //query input
-  console.log(input);
-  const output = []
-
-  // sends input keyword to index.js to present to server; then logs output (in form of array)
-  fetch("http://localhost:3002?keyword=" + input)
-    .then(res => res.json())
-    .then((out) => {
-      if (out.length == 1) {
-        output.push(out);
-      }
-      else {
-        for (let i = 0; i < out.length; i++) {
-          let title = out[i][0]
-          let link = out[i][1]
-          let desc = out[i][2]
-          output.push([title, link, desc])
-        }
-        
-      } 
-    })
-    .catch(err => {
-      throw err
-    });
-
-  console.log(output[0]);
-  return output;
 }
 
 // generates the list of links, titles, and descriptions relevant to output
@@ -66,10 +53,11 @@ function GenerateOutput(props) {
   const output = []
   
   if (raw_output == null || raw_output.length == 0) {
-    output.push(<p>No Results Found</p>)
+    //console.log()
+    output.push(<p align='center'>No Results Found</p>)
   }
   else {
-    for (let i = 0; i < raw_output.length; i++) {
+    for (let i = 0; i < Math.min(raw_output.length, 10); i++) {
       output.push(<SearchOutput title={raw_output[i][0]} link={raw_output[i][1]} desc={raw_output[i][2]}/>)
       console.log(raw_output[i][1]);
     }
@@ -81,8 +69,16 @@ function GenerateOutput(props) {
 // returns and prints the titles and descriptions of each relevant link
 function SearchOutput(props) {
   return (
-    <div className="SearchOutput">
-      <a target="_blank" href={props.link}>{props.title}</a>
+    <div className="SearchOutput" 
+         align='left'
+         style={{paddingLeft: '20%', 
+                 paddingRight: '20%', 
+                 paddingBottom: 20,}}>
+      <a target="_blank"
+       href={props.link}
+       style={{
+         fontSize: 20
+       }}>{props.title}</a>
       <p>{props.desc}</p>
     </div>
   );
